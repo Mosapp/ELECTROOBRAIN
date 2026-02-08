@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'lesson_detail_screen.dart'; // <--- IMPORTANT
 
 class LessonsScreen extends StatelessWidget {
   final String languageCode;
@@ -102,7 +103,6 @@ class LessonsScreen extends StatelessWidget {
     },
   ];
 
-  // Filtre automatique
   List<Map<String, dynamic>> get _chapters {
     return _allChapters.where((chapter) => chapter['level'] == userLevel).toList();
   }
@@ -149,11 +149,15 @@ class LessonsScreen extends StatelessWidget {
   Widget _buildChapterCard(BuildContext context, Map<String, dynamic> chapter) {
     return GestureDetector(
       onTap: () {
-        String title = _getText(chapter['titleKey']);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Ouverture : $title"),
-            backgroundColor: Colors.black,
+        // EXTRACTION DE L'ID : 'c1_title' -> 'c1'
+        String chapterId = chapter['titleKey'].toString().split('_')[0];
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => LessonDetailScreen(
+              languageCode: languageCode,
+              chapterKey: chapterId,
+            ),
           ),
         );
       },

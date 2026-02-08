@@ -19,20 +19,21 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Animation du logo (1.5s)
+    // Animation lente (1.5 secondes)
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 2500),
     );
 
+    // Effet rebond (Elastic)
     _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
     );
 
     _controller.forward();
 
-    // Durée de l'écran (5s)
-    Timer(const Duration(seconds: 5), () {
+    // L'écran dure 5 secondes avant de changer
+    Timer(const Duration(seconds: 08), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const LanguageScreen()),
       );
@@ -53,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // --- 1. LE LOGO ANIMÉ (BOING) ---
+            // --- 1. LE LOGO ANIMÉ (TAILLE AUGMENTÉE) ---
             AnimatedBuilder(
               animation: _controller,
               builder: (context, child) {
@@ -68,18 +69,18 @@ class _SplashScreenState extends State<SplashScreen>
                   color: Colors.yellow,
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: Colors.black, width: 3),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black,
-                      offset: const Offset(0, 8),
-                      blurRadius: 0,
+                      offset: Offset(0, 8),
+                      blurRadius: 0, // Ombre dure
                     ),
                   ],
                 ),
-                child: const Icon(
-                  Icons.electrical_services,
-                  size: 100,
-                  color: Color(0xFF1CB0F6),
+                child: Image.asset(
+                  'assets/images/logotournant.gif',
+                  width: 150, // Taille augmentée (au lieu de 100)
+                  height: 150, // Taille augmentée (au lieu de 100)
                 ),
               ),
             ),
@@ -106,6 +107,7 @@ class _SplashScreenState extends State<SplashScreen>
 
             const SizedBox(height: 20),
 
+            // --- 3. LE SLOGAN ---
             const Text(
               "C'est parti !",
               style: TextStyle(
@@ -124,7 +126,7 @@ class _SplashScreenState extends State<SplashScreen>
 
             const SizedBox(height: 60),
 
-            // --- 3. LA BATTERIE ANIMÉE (Nouveau Design) ---
+            // --- 4. LE LOADER (BATTERIE) ---
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -148,7 +150,7 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                   ),
                 ),
-                // Le petit bout de la batterie (Borne +)
+                // Le petit bout de la batterie
                 Container(
                   width: 10,
                   height: 35,

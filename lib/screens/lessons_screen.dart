@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'lesson_detail_screen.dart'; // <--- IMPORTANT
+import 'lesson_detail_screen.dart';
 
 class LessonsScreen extends StatelessWidget {
   final String languageCode;
@@ -7,104 +7,108 @@ class LessonsScreen extends StatelessWidget {
 
   const LessonsScreen({super.key, required this.languageCode, required this.userLevel});
 
-  static const Map<String, Map<String, String>> _lessonTranslations = {
-    'fr': {
-      'appBar': 'Mes Leçons',
-      'c1_title': 'Lois Fondamentales',
-      'c1_desc': 'Tension, Courant, Loi d\'Ohm et Puissance.',
-      'c2_title': 'Composants Passifs',
-      'c2_desc': 'Résistances, Condensateurs, Bobines.',
-      'c3_title': 'Architecture de l\'Info',
-      'c3_desc': 'Binaire, Hexadécimal, Codage de l\'information.',
-      'c4_title': 'Logique Combinatoire',
-      'c4_desc': 'Fonctions logiques, Tables de vérité.',
-      'c5_title': 'Microcontrôleurs',
-      'c5_desc': 'Introduction aux PIC/Arduino, Ports E/S.',
-      'c6_title': 'Lecture de Schémas',
-      'c6_desc': 'Symboles normalisés, Analyse de circuits.',
-      'c7_title': 'CAN & CNA',
-      'c7_desc': 'Conversion Analogique/Numérique.',
-      'c8_title': 'Capteurs & Actionneurs',
-      'c8_desc': 'Interfaçage avec le monde réel.',
-    },
-    'en': {
-      'appBar': 'My Lessons',
-      'c1_title': 'Fundamental Laws',
-      'c1_desc': 'Voltage, Current, Ohm\'s Law and Power.',
-      'c2_title': 'Passive Components',
-      'c2_desc': 'Resistors, Capacitors, Inductors.',
-      'c3_title': 'Computer Architecture',
-      'c3_desc': 'Binary, Hexadecimal, and Information Coding.',
-      'c4_title': 'Combinatorial Logic',
-      'c4_desc': 'Logic gates, Truth tables, Boolean Algebra.',
-      'c5_title': 'Microcontrollers',
-      'c5_desc': 'Intro to PIC/Arduino, I/O Ports.',
-      'c6_title': 'Reading Schematics',
-      'c6_desc': 'Standard symbols, PCB circuit analysis.',
-      'c7_title': 'ADC & DAC',
-      'c7_desc': 'Analog/Digital Conversion.',
-      'c8_title': 'Sensors & Actuators',
-      'c8_desc': 'Interfacing with the real world.',
-    },
+  static const Map<String, Map<String, String>> _subjectTranslations = {
+    // Matières BT
+    's1': {'fr': '1. Technologie Schéma', 'en': '1. Technology & Schematics'},
+    's2': {'fr': '2. TP Mesure', 'en': '2. Lab Measurements'},
+    's3': {'fr': '3. Mathématiques appliquées', 'en': '3. Applied Math'},
+    's4': {'fr': '4. Sciences Physiques', 'en': '4. Physical Sciences'},
+    's8': {'fr': '8. Dessin Industriel', 'en': '8. Industrial Drawing'},
+    's13': {'fr': '13. RTV / CMC', 'en': '13. RTV / CMC'},
+    's14': {'fr': '14. EDHC', 'en': '14. EDHC'},
+
+    // Matières BTS
+    's5': {'fr': '5. Électronique Analogique', 'en': '5. Analog Electronics'},
+    's6': {'fr': '6. Électronique Numérique', 'en': '6. Digital Electronics'},
+    's7': {'fr': '7. Informatique', 'en': '7. Computer Science'},
+    's9': {'fr': '9. Téléphonie', 'en': '9. Telephony'},
+    's10': {'fr': '10. Maintenance Atelier', 'en': '10. Workshop Maintenance'},
+    's11': {'fr': '11. Anglais Technique', 'en': '11. Technical English'},
+    's12': {'fr': '12. Technique d’Expression', 'en': '12. Expression Techniques'},
   };
 
   String _getText(String key) {
-    return _lessonTranslations[languageCode]?[key] ?? _lessonTranslations['fr']![key]!;
+    return _subjectTranslations[key]?[languageCode] ?? _subjectTranslations[key]!['fr']!;
   }
 
-  final List<Map<String, dynamic>> _allChapters = const [
+  final List<Map<String, dynamic>> _allSubjects = const [
+    // --- BT ---
     {
-      'icon': Icons.bolt,
-      'titleKey': 'c1_title',
-      'descKey': 'c1_desc',
+      'id': 's1',
+      'icon': Icons.architecture,
       'level': 'BT',
     },
     {
-      'icon': Icons.category,
-      'titleKey': 'c2_title',
-      'descKey': 'c2_desc',
+      'id': 's2',
+      'icon': Icons.speed,
       'level': 'BT',
     },
     {
+      'id': 's3',
+      'icon': Icons.calculate,
+      'level': 'BT',
+    },
+    {
+      'id': 's4',
+      'icon': Icons.science,
+      'level': 'BT',
+    },
+    {
+      'id': 's8',
+      'icon': Icons.brush,
+      'level': 'BT',
+    },
+    {
+      'id': 's13',
+      'icon': Icons.work, // Icône corrigée
+      'level': 'BT',
+    },
+    {
+      'id': 's14',
+      'icon': Icons.volunteer_activism,
+      'level': 'BT',
+    },
+
+    // --- BTS ---
+    {
+      'id': 's5',
       'icon': Icons.memory,
-      'titleKey': 'c3_title',
-      'descKey': 'c3_desc',
-      'level': 'BT',
-    },
-    {
-      'icon': Icons.grid_on,
-      'titleKey': 'c4_title',
-      'descKey': 'c4_desc',
       'level': 'BTS',
     },
     {
-      'icon': Icons.developer_board,
-      'titleKey': 'c5_title',
-      'descKey': 'c5_desc',
+      'id': 's6',
+      'icon': Icons.laptop_mac,
       'level': 'BTS',
     },
     {
-      'icon': Icons.description,
-      'titleKey': 'c6_title',
-      'descKey': 'c6_desc',
+      'id': 's7',
+      'icon': Icons.computer,
       'level': 'BTS',
     },
     {
-      'icon': Icons.swap_horiz,
-      'titleKey': 'c7_title',
-      'descKey': 'c7_desc',
+      'id': 's9',
+      'icon': Icons.phone_in_talk,
       'level': 'BTS',
     },
     {
-      'icon': Icons.sensors,
-      'titleKey': 'c8_title',
-      'descKey': 'c8_desc',
+      'id': 's10',
+      'icon': Icons.build,
+      'level': 'BTS',
+    },
+    {
+      'id': 's11',
+      'icon': Icons.translate,
+      'level': 'BTS',
+    },
+    {
+      'id': 's12',
+      'icon': Icons.slideshow, // Icône corrigée
       'level': 'BTS',
     },
   ];
 
-  List<Map<String, dynamic>> get _chapters {
-    return _allChapters.where((chapter) => chapter['level'] == userLevel).toList();
+  List<Map<String, dynamic>> get _subjects {
+    return _allSubjects.where((subject) => subject['level'] == userLevel).toList();
   }
 
   @override
@@ -112,23 +116,9 @@ class LessonsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF1CB0F6),
       appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.black, width: 2),
-              boxShadow: const [
-                BoxShadow(color: Colors.black, offset: Offset(0, 2), blurRadius: 0)
-              ],
-            ),
-            child: const Icon(Icons.arrow_back, color: Color(0xFF1CB0F6)),
-          ),
-        ),
+        leading: _buildBackButton(context),
         title: Text(
-          _getText('appBar'),
+          languageCode == 'fr' ? "Mes Matières" : "My Subjects",
           style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
         ),
         backgroundColor: const Color(0xFF1CB0F6),
@@ -137,26 +127,41 @@ class LessonsScreen extends StatelessWidget {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(20),
-        itemCount: _chapters.length,
+        itemCount: _subjects.length,
         itemBuilder: (context, index) {
-          final chapter = _chapters[index];
-          return _buildChapterCard(context, chapter);
+          final subject = _subjects[index];
+          return _buildSubjectCard(context, subject);
         },
       ),
     );
   }
 
-  Widget _buildChapterCard(BuildContext context, Map<String, dynamic> chapter) {
+  Widget _buildBackButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).pop(),
+      child: Container(
+        margin: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.black, width: 2),
+          boxShadow: const [
+            BoxShadow(color: Colors.black, offset: Offset(0, 2), blurRadius: 0)
+          ],
+        ),
+        child: const Icon(Icons.arrow_back, color: Color(0xFF1CB0F6)),
+      ),
+    );
+  }
+
+  Widget _buildSubjectCard(BuildContext context, Map<String, dynamic> subject) {
     return GestureDetector(
       onTap: () {
-        // EXTRACTION DE L'ID : 'c1_title' -> 'c1'
-        String chapterId = chapter['titleKey'].toString().split('_')[0];
-
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => LessonDetailScreen(
               languageCode: languageCode,
-              chapterKey: chapterId,
+              subjectId: subject['id'],
             ),
           ),
         );
@@ -181,35 +186,17 @@ class LessonsScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.black, width: 2),
               ),
-              child: Icon(
-                chapter['icon'],
-                color: Colors.black,
-                size: 30,
-              ),
+              child: Icon(subject['icon'], color: Colors.black, size: 30),
             ),
             const SizedBox(width: 15),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _getText(chapter['titleKey']),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    _getText(chapter['descKey']),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+              child: Text(
+                _getText(subject['id']),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black,
+                ),
               ),
             ),
             const Icon(Icons.chevron_right, size: 30, color: Colors.black),

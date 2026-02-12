@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'lessons_screen.dart';
+import 'lessons_screen.dart'; // Écran des matières
+import 'mini_games_screen.dart'; // Écran des jeux (NOUVEAU)
 
 class DashboardScreen extends StatelessWidget {
   final String languageCode;
@@ -7,6 +8,7 @@ class DashboardScreen extends StatelessWidget {
 
   const DashboardScreen({super.key, required this.languageCode, required this.userLevel});
 
+  // --- TRADUCTIONS ---
   static const Map<String, Map<String, String>> _translations = {
     'fr': {
       'appBar': 'Tableau de bord',
@@ -32,6 +34,7 @@ class DashboardScreen extends StatelessWidget {
     return _translations[languageCode]?[key] ?? _translations['fr']![key]!;
   }
 
+  // --- LISTE DES MODULES ---
   List<Map<String, dynamic>> _getModules() {
     return [
       {
@@ -74,21 +77,7 @@ class DashboardScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF1CB0F6),
       appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.black, width: 2),
-              boxShadow: const [
-                BoxShadow(color: Colors.black, offset: Offset(0, 2), blurRadius: 0)
-              ],
-            ),
-            child: const Icon(Icons.arrow_back, color: Color(0xFF1CB0F6)),
-          ),
-        ),
+        leading: _buildBackButton(context),
         title: Text(
           _getText('appBar'),
           style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
@@ -120,7 +109,10 @@ class DashboardScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         String title = module['title'];
+
+        // LOGIQUE DE NAVIGATION
         if (title.contains('Leçons') || title.contains('Lessons')) {
+          // On va vers l'écran des matières avec la langue et le niveau
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => LessonsScreen(
@@ -129,7 +121,15 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
           );
+        } else if (title.contains('Jeux') || title.contains('Games')) {
+          // On va vers l'écran des jeux
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const MiniGamesScreen(),
+            ),
+          );
         } else {
+          // Pour les autres (Quiz, Vidéos...), on garde le message temporaire
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text("${_getText('opening')} $title"),
@@ -178,6 +178,27 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).pop(),
+      child: Container(
+        margin: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.black, width: 2),
+          boxShadow: const [
+            BoxShadow(color: Colors.black, offset: Offset(0, 2), blurRadius: 0)
+          ],
+        ),
+        child: const Icon(
+          Icons.arrow_back,
+          color: Color(0xFF1CB0F6),
         ),
       ),
     );

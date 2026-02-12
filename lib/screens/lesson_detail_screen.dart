@@ -1,170 +1,225 @@
 import 'package:flutter/material.dart';
+import 'sub_topic_detail_screen.dart'; // On importe le nouvel écran
 
 class LessonDetailScreen extends StatelessWidget {
   final String languageCode;
-  final String chapterKey; // Recevra 'c1', 'c2', etc.
+  final String subjectId;
 
   const LessonDetailScreen({
     super.key,
     required this.languageCode,
-    required this.chapterKey,
+    required this.subjectId,
   });
 
-  // --- BASE DE DONNÉES DU CONTENU DES COURS ---
-  static const Map<String, Map<String, Map<String, String>>> _contentData = {
-    'c1': {
-      'fr': {
-        'title': 'Chapitre 1 : Lois Fondamentales',
-        'content': """
-L'électricité est le mouvement des électrons dans un conducteur. Pour comprendre comment elle fonctionne, il faut maîtriser trois concepts clés :
+  // NOUVELLE STRUCTURE : Chaque sujet a une liste de sous-thèmes avec TITRE + CONTENU
+  static const Map<String, Map<String, dynamic>> _contentData = {
+    's1': {
+      'title': 'Technologie Schéma',
+      'topics': [
+        {
+          'title': 'Lecture de schémas électriques',
+          'content': """
+La lecture de schéma est une compétence essentielle pour tout technicien. Un schéma électrique est un dessin qui représente un circuit électrique de manière normalisée.
 
-1. La Tension (U) : Mesurée en Volts (V), c'est la "pression" qui pousse les électrons. C'est la différence de potentiel entre deux points d'un circuit.
+**Principe :**
+Il utilise des symboles graphiques pour représenter les composants (résistances, bobines, interrupteurs) et des lignes pour représenter les fils de connexion.
 
-2. L'Intensité (I) : Mesurée en Ampères (A), c'est le débit du courant électrique, c'est-à-dire le nombre d'électrons qui passent en une seconde.
+**Fonctionnement :**
+Pour lire un schéma, on suit le parcours du courant depuis la source d'alimentation (généralement en haut à gauche) vers la masse (en bas). On analyse ensuite chaque branche pour comprendre la fonction de chaque partie du circuit.
+          """
+        },
+        {
+          'title': 'Symboles normalisés',
+          'content': """
+Les symboles normalisés sont des codes graphiques universels définis par des normes (comme la CEI 60617). Ils permettent à des ingénieurs de pays différents de se comprendre sans parler la même langue.
 
-3. La Résistance (R) : Mesurée en Ohms (Ω), c'est la difficulté que les électrons rencontrent pour passer dans le matériau.
+**Exemples courants :**
+- Résistance : Un rectangle (ou un zigzag selon l'ancienne norme).
+- Générateur : Deux cercles, l'un représentant le '+' et l'autre le '-'.
+- Masse : Trois lignes horizontales de taille décroissante.
 
-La Loi d'Ohm est la base de l'électronique :
-U = R x I
-(Tension = Résistance x Intensité)
-        """
-      },
-      'en': {
-        'title': 'Chapter 1: Fundamental Laws',
-        'content': """
-Electricity is the movement of electrons in a conductor. To understand how it works, we must master three key concepts:
+**Pourquoi c'est important ?**
+Si vous voyez un triangle sur un schéma, vous savez immédiatement qu'il s'agit d'un amplificateur opérationnel, sans avoir besoin de lire un texte en anglais ou en chinois.
+          """
+        },
+        {
+          'title': 'Schéma développé vs unifilaire',
+          'content': """
+Il existe deux façons principales de dessiner les connexions.
 
-1. Voltage (U): Measured in Volts (V), it is the "pressure" pushing the electrons. It is the potential difference between two points in a circuit.
+1. **Schéma Développé (Multifilaire) :** Chaque fil est dessiné individuellement. C'est très clair pour de petits circuits, mais ça devient illisible dès qu'il y a trop de fils qui se croisent.
 
-2. Current (I): Measured in Amperes (A), it is the flow rate of the electric current, i.e., the number of electrons passing per second.
+2. **Schéma Unifilaire :** Au lieu de dessiner 3 fils pour un câble triphasé, on en dessine un seul avec une barre oblique et le chiffre "3". C'est beaucoup plus propre pour les installations industrielles complexes.
+          """
+        },
+        {
+          'title': 'Schéma de câblage',
+          'content': """
+Contrairement au schéma de principe qui montre la logique, le schéma de câblage montre **physiquement** où sont connectés les appareils.
 
-3. Resistance (R): Measured in Ohms (Ω), it is the difficulty the electrons encounter to pass through the material.
+Il ressemble à un plan d'architecte où l'on voit la position des prises, des interrupteurs et des lampes, et le chemin réel des câbles dans les murs ou les gaines.
+          """
+        },
+        {
+          'title': 'Repérage des composants',
+          'content': """
+Pour ne pas se perdre dans un schéma complexe, chaque composant est identifié par un code (ex: R1 pour la première résistance, K1 pour le premier relais).
 
-Ohm's Law is the basis of electronics:
-U = R x I
-(Voltage = Resistance x Current)
-        """
-      },
+**Règle de base :**
+- Lettre(s) : Type de composant (R= Résistance, C=Condensateur, K=Relais).
+- Chiffre : Numéro d'ordre.
+
+Cela permet aussi de faire correspondre le schéma avec le plan de câblage et la nomenclature (la liste des pièces).
+          """
+        },
+        {
+          'title': 'Interprétation de plans industriels',
+          'content': """
+Dans l'industrie, les schémas sont souvent divisés en plusieurs folios (pages).
+- Le folio 1 contient l'alimentation.
+- Le folio 2 contient la commande.
+
+Des flèches ou des références croisés (ex: "Voir folio 2/3") permettent de naviguer entre les pages pour suivre le signal électrique à travers toute l'installation.
+          """
+        },
+      ],
     },
-    // --- Chapitres suivants (Placeholders) ---
-    'c2': {
-      'fr': {'title': 'Composants Passifs', 'content': 'Contenu sur les résistances et condensateurs... À compléter.'},
-      'en': {'title': 'Passive Components', 'content': 'Content about resistors and capacitors... To be completed.'},
+    // --- Pour les autres sujets (s2 à s14), je laisse la structure simple pour l'instant ---
+    // Vous devrez copier le format ci-dessus pour ajouter le vrai contenu.
+    's2': {
+      'title': 'TP Mesure',
+      'topics': [
+        {'title': 'Utilisation du multimètre', 'content': 'Contenu à ajouter...'},
+        {'title': 'Mesure de tension AC/DC', 'content': 'Contenu à ajouter...'},
+        {'title': 'Mesure de courant', 'content': 'Contenu à ajouter...'},
+        {'title': 'Mesure de résistance', 'content': 'Contenu à ajouter...'},
+        {'title': 'Test de continuité', 'content': 'Contenu à ajouter...'},
+        {'title': 'Utilisation de l’oscilloscope', 'content': 'Contenu à ajouter...'},
+        {'title': 'Sécurité en laboratoire', 'content': 'Contenu à ajouter...'},
+      ],
     },
-    'c3': {
-      'fr': {'title': 'Architecture de l\'Info', 'content': 'Contenu sur le binaire et l\'hexadécimal... À compléter.'},
-      'en': {'title': 'Computer Architecture', 'content': 'Content about binary and hexadecimal... To be completed.'},
+    's3': {
+      'title': 'Mathématiques appliquées',
+      'topics': [
+        {'title': 'Calcul littéral', 'content': 'Contenu à ajouter...'},
+        {'title': 'Équations du 1er et 2e degré', 'content': 'Contenu à ajouter...'},
+        {'title': 'Trigonométrie', 'content': 'Contenu à ajouter...'},
+        {'title': 'Nombres complexes', 'content': 'Contenu à ajouter...'},
+        {'title': 'Puissance et énergie', 'content': 'Contenu à ajouter...'},
+        {'title': 'Calculs de circuits', 'content': 'Contenu à ajouter...'},
+      ],
     },
-    'c4': {
-      'fr': {'title': 'Logique Combinatoire', 'content': 'Contenu sur les portes logiques... À compléter.'},
-      'en': {'title': 'Combinatorial Logic', 'content': 'Content about logic gates... To be completed.'},
-    },
-    'c5': {
-      'fr': {'title': 'Microcontrôleurs', 'content': 'Contenu sur les PIC et Arduino... À compléter.'},
-      'en': {'title': 'Microcontrollers', 'content': 'Content about PIC and Arduino... To be completed.'},
-    },
-    'c6': {
-      'fr': {'title': 'Lecture de Schémas', 'content': 'Contenu sur les symboles... À compléter.'},
-      'en': {'title': 'Reading Schematics', 'content': 'Content about symbols... To be completed.'},
-    },
-    'c7': {
-      'fr': {'title': 'CAN & CNA', 'content': 'Contenu sur la conversion... À compléter.'},
-      'en': {'title': 'ADC & DAC', 'content': 'Content about conversion... To be completed.'},
-    },
-    'c8': {
-      'fr': {'title': 'Capteurs & Actionneurs', 'content': 'Contenu sur l\'interfaçage... À compléter.'},
-      'en': {'title': 'Sensors & Actuators', 'content': 'Content about interfacing... To be completed.'},
-    },
+    // ... (s4, s5, etc. peuvent être ajoutés sur le même modèle)
   };
 
-  String _getLessonInfo(String type) {
-    if (!_contentData.containsKey(chapterKey)) {
-      return languageCode == 'fr' ? "Contenu non disponible" : "Content not available";
-    }
-    final chapter = _contentData[chapterKey]!;
-    return chapter[languageCode]?[type] ?? chapter['fr']![type]!;
+  Map<String, dynamic>? _getSubjectData() {
+    return _contentData[subjectId];
   }
 
   @override
   Widget build(BuildContext context) {
-    String title = _getLessonInfo('title');
-    String content = _getLessonInfo('content');
+    final data = _getSubjectData();
+
+    if (data == null) {
+      return Scaffold(
+        backgroundColor: const Color(0xFF1CB0F6),
+        appBar: AppBar(
+          leading: _buildBackButton(context),
+          title: const Text("Leçon", style: TextStyle(color: Colors.white)),
+          backgroundColor: const Color(0xFF1CB0F6),
+          elevation: 0,
+        ),
+        body: const Center(
+          child: Text(
+            "Contenu à venir...",
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
+      );
+    }
+
+    String title = data['title'];
+    // Note: On récupère une liste d'objets maintenant, pas juste des String
+    List<dynamic> topics = data['topics'];
 
     return Scaffold(
       backgroundColor: const Color(0xFF1CB0F6),
       appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.black, width: 2),
-              boxShadow: const [
-                BoxShadow(color: Colors.black, offset: Offset(0, 2), blurRadius: 0)
-              ],
-            ),
-            child: const Icon(Icons.arrow_back, color: Color(0xFF1CB0F6)),
-          ),
-        ),
-        title: const Text(
-          "Leçon",
-          style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white),
-        ),
+        leading: _buildBackButton(context),
+        title: const Text("Leçon", style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF1CB0F6),
         elevation: 0,
-        centerTitle: true,
       ),
-      body: SingleChildScrollView(
+      body: ListView.builder( // On utilise ListView.builder pour pouvoir scroller
         padding: const EdgeInsets.all(20),
-        child: Column(
+        itemCount: topics.length,
+        itemBuilder: (context, index) {
+          final topic = topics[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 15.0),
+            child: _buildTopicCard(context, topic),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildTopicCard(BuildContext context, Map<String, dynamic> topic) {
+    return GestureDetector(
+      onTap: () {
+        // On ouvre le nouvel écran avec le titre et le contenu
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => SubTopicDetailScreen(
+              topicTitle: topic['title'],
+              topicContent: topic['content'],
+            ),
+          ),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.black, width: 2),
+        ),
+        child: Row(
           children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(25),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.black, width: 3),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black,
-                    offset: Offset(0, 8),
-                    blurRadius: 0,
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    height: 4,
-                    color: Colors.yellow,
-                    margin: const EdgeInsets.only(bottom: 20),
-                  ),
-                  Text(
-                    content,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      height: 1.5,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
+            const Icon(Icons.arrow_right, color: Colors.blue),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                topic['title'],
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
               ),
             ),
+            const Icon(Icons.chevron_right, size: 20, color: Colors.grey),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).pop(),
+      child: Container(
+        margin: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.black, width: 2),
+          boxShadow: const [
+            BoxShadow(color: Colors.black, offset: Offset(0, 2), blurRadius: 0)
+          ],
+        ),
+        child: const Icon(Icons.arrow_back, color: Color(0xFF1CB0F6)),
       ),
     );
   }

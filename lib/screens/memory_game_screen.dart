@@ -9,24 +9,32 @@ class MemoryGameScreen extends StatefulWidget {
 }
 
 class _MemoryGameState extends State<MemoryGameScreen> {
-  // --- DONNÉES DU JEU ---
+  // --- DONNÉES DU JEU (UNIQUEMENT DES IMAGES) ---
   final List<Map<String, dynamic>> _gameItems = const [
-    {'id': 1, 'name': 'Résistance', 'icon': Icons.memory, 'color': Colors.blue},
-    {'id': 1, 'name': 'Resistor', 'icon': Icons.memory, 'color': Colors.blue},
-    {'id': 2, 'name': 'Condensateur', 'icon': Icons.battery_charging_full, 'color': Colors.green},
-    {'id': 2, 'name': 'Capacitor', 'icon': Icons.battery_charging_full, 'color': Colors.green},
-    {'id': 3, 'name': 'Diode', 'icon': Icons.electric_bolt, 'color': Colors.red},
-    {'id': 3, 'name': 'Diode', 'icon': Icons.electric_bolt, 'color': Colors.red},
-    {'id': 4, 'name': 'Transistor', 'icon': Icons.settings_input_component, 'color': Colors.orange},
-    {'id': 4, 'name': 'Transistor', 'icon': Icons.settings_input_component, 'color': Colors.orange},
-    {'id': 5, 'name': 'Batterie', 'icon': Icons.battery_std, 'color': Colors.grey},
-    {'id': 5, 'name': 'Battery', 'icon': Icons.battery_std, 'color': Colors.grey},
-    {'id': 6, 'name': 'Masse', 'icon': Icons.remove_circle_outline, 'color': Colors.black},
-    {'id': 6, 'name': 'Ground', 'icon': Icons.remove_circle_outline, 'color': Colors.black},
-    {'id': 7, 'name': 'Led', 'icon': Icons.lightbulb, 'color': Colors.yellow},
-    {'id': 7, 'name': 'LED', 'icon': Icons.lightbulb, 'color': Colors.yellow},
-    {'id': 8, 'name': 'Interrupteur', 'icon': Icons.toggle_on, 'color': Colors.purple},
-    {'id': 8, 'name': 'Switch', 'icon': Icons.toggle_on, 'color': Colors.purple},
+    // On met la même image deux fois pour créer la paire
+    {'id': 1, 'image': 'assets/images/games/resistance.png'},
+    {'id': 1, 'image': 'assets/images/games/resistance.png'},
+
+    {'id': 2, 'image': 'assets/images/games/condensateur.png'},
+    {'id': 2, 'image': 'assets/images/games/condensateur.png'},
+
+    {'id': 3, 'image': 'assets/images/games/diode.png'},
+    {'id': 3, 'image': 'assets/images/games/diode.png'},
+
+    {'id': 4, 'image': 'assets/images/games/transistor.png'},
+    {'id': 4, 'image': 'assets/images/games/transistor.png'},
+
+    {'id': 5, 'image': 'assets/images/games/batterie.png'},
+    {'id': 5, 'image': 'assets/images/games/batterie.png'},
+
+    {'id': 6, 'image': 'assets/images/games/masse.png'},
+    {'id': 6, 'image': 'assets/images/games/masse.png'},
+
+    {'id': 7, 'image': 'assets/images/games/led.png'},
+    {'id': 7, 'image': 'assets/images/games/led.png'},
+
+    {'id': 8, 'image': 'assets/images/games/fusible.png'},
+    {'id': 8, 'image': 'assets/images/games/fusible.png'},
   ];
 
   late List<Map<String, dynamic>> _cards;
@@ -42,12 +50,14 @@ class _MemoryGameState extends State<MemoryGameScreen> {
   }
 
   void _restartGame() {
-    _cards = List.from(_gameItems);
-    _cards.shuffle(Random());
-    _flippedCards = [];
-    _matchedCards = [];
-    _moves = 0;
-    _isLocked = false;
+    setState(() {
+      _cards = List.from(_gameItems);
+      _cards.shuffle(Random());
+      _flippedCards = [];
+      _matchedCards = [];
+      _moves = 0;
+      _isLocked = false;
+    });
   }
 
   void _onCardTap(int index) {
@@ -64,13 +74,16 @@ class _MemoryGameState extends State<MemoryGameScreen> {
   }
 
   void _checkForMatch() async {
-    setState(() => _isLocked = true);
-    setState(() => _moves++);
+    setState(() {
+      _isLocked = true;
+      _moves++;
+    });
 
     int index1 = _flippedCards[0];
     int index2 = _flippedCards[1];
 
     if (_cards[index1]['id'] == _cards[index2]['id']) {
+      await Future.delayed(const Duration(milliseconds: 500));
       setState(() {
         _matchedCards.add(index1);
         _matchedCards.add(index2);
@@ -90,147 +103,136 @@ class _MemoryGameState extends State<MemoryGameScreen> {
     }
   }
 
-  void _showVictoryDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: const BorderSide(color: Colors.black, width: 3),
-          ),
-          backgroundColor: Colors.yellow,
-          title: const Text(
-            "Bravo !",
-            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 30, color: Colors.black),
-            textAlign: TextAlign.center,
-          ),
-          content: Text(
-            "Tu as retrouvé tous les composants\nen $_moves coups !",
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _restartGame();
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.black,
-              ),
-              child: const Text(
-                "Rejouer",
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Colors.black),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1CB0F6),
       appBar: AppBar(
-        leading: _buildBackButton(context),
-        title: const Text("Memory", style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF1CB0F6),
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.black, width: 2),
+            ),
+            child: const Icon(Icons.arrow_back, color: Colors.black),
+          ),
+        ),
+        title: const Text("Memory Élec", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         centerTitle: true,
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Center(
-              child: Text(
-                "Coups: $_moves",
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 18),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Text("Coups: $_moves", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+            ),
+          )
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 0.85,
               ),
+              itemCount: _cards.length,
+              itemBuilder: (context, index) {
+                return _buildGameCard(index);
+              },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _restartGame,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    side: const BorderSide(color: Colors.black, width: 2),
+                  ),
+                  elevation: 0,
+                  shadowColor: Colors.transparent,
+                ),
+                child: const Text("Réinitialiser", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+              ),
+            ),
+          )
         ],
-      ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(10),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: 0.8,
-        ),
-        itemCount: _cards.length,
-        itemBuilder: (context, index) {
-          bool isFlipped = _flippedCards.contains(index) || _matchedCards.contains(index);
-          bool isMatched = _matchedCards.contains(index);
-          return _buildGameCard(index, isFlipped, isMatched);
-        },
       ),
     );
   }
 
-  Widget _buildGameCard(int index, bool isFlipped, bool isMatched) {
-    bool showText = index % 2 != 0;
-    Widget cardContent;
+  Widget _buildGameCard(int index) {
+    bool isFlipped = _flippedCards.contains(index) || _matchedCards.contains(index);
 
-    if (isFlipped || isMatched) {
-      if (showText) {
-        cardContent = Text(
-          _cards[index]['name'],
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
-            color: _cards[index]['color'],
-          ),
-        );
-      } else {
-        cardContent = Icon(
-          _cards[index]['icon'],
-          color: _cards[index]['color'],
-          size: 40,
-        );
-      }
-    } else {
-      cardContent = const Icon(
-        Icons.help_outline,
-        size: 40,
-        color: Color(0xFF1CB0F6),
-      );
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        color: isFlipped || isMatched ? Colors.white : Colors.yellow,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.black, width: 2),
-        boxShadow: const [
-          BoxShadow(color: Colors.black, offset: Offset(0, 3), blurRadius: 0)
-        ],
-      ),
-      child: Center(child: cardContent),
-    );
-  }
-
-  Widget _buildBackButton(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).pop(),
-      child: Container(
-        margin: const EdgeInsets.all(8),
+      onTap: () => _onCardTap(index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.black, width: 2),
-          boxShadow: const [
-            BoxShadow(color: Colors.black, offset: Offset(0, 2), blurRadius: 0)
+          color: isFlipped ? Colors.white : Colors.yellow,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.black, width: 2.5),
+          boxShadow: [
+            if (!isFlipped) const BoxShadow(color: Colors.black, offset: Offset(0, 4))
           ],
         ),
-        child: const Icon(
-          Icons.arrow_back,
-          color: Color(0xFF1CB0F6),
+        child: Center(
+          child: isFlipped
+              ? _getCardContent(index)
+              : const Icon(Icons.help_outline, size: 35, color: Color(0xFF1CB0F6)),
         ),
+      ),
+    );
+  }
+
+  // --- SIMPLIFICATION : TOUJOURS UNE IMAGE ---
+  Widget _getCardContent(int index) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Image.asset(
+        _cards[index]['image'], // On affiche l'image liée à la carte
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => const Icon(Icons.warning, color: Colors.red),
+      ),
+    );
+  }
+
+  void _showVictoryDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Colors.black, width: 3),
+        ),
+        backgroundColor: Colors.yellow,
+        title: const Text("Bravo !", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 30, color: Colors.black)),
+        content: Text("Tu as terminé en $_moves coups.", style: TextStyle(fontSize: 18)),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _restartGame();
+              },
+              child: const Text("Rejouer", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Colors.black))
+          )
+        ],
       ),
     );
   }

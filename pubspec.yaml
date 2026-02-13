@@ -19,8 +19,13 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  # --- LES IMAGES (GIF, PNG) ICI ---
+  assets:
+    - assets/images/logotournant.gif          # Pour le logo.gif
+    - assets/images/games/   # Pour tes composants
+
+  # --- LES POLICES (FICHIERS .TTF) ICI ---
   fonts:
     - family: Rencana
       fonts:
         - asset: fonts/Rencana.ttf
-        - asset: assets/images/logotournant.gif
